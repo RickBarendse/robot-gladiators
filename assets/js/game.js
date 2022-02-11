@@ -1,3 +1,12 @@
+/* GAME FUNCTIONS */
+
+//function to generate a random numeric value
+var randomNumber = function(min, max) {
+    var value = Math.floor(Math.random() * (max - min +1) + min);
+
+    return value;
+};
+
 // fight function
 var fight = function(enemy) {
     while (playerInfo.health >0 && enemy.health > 0) {
@@ -19,7 +28,6 @@ var fight = function(enemy) {
         }
     } 
 
-        // Subtract the value of 'playerAttack' from the value of 'enemyHealth' and use that result to update the value in the 'enemyHealth' variable.
        // genertate random damage value based on player's attack power
        var damage = randomNumber(playerInfo.attack - 3, playerInfo.attack);
 
@@ -33,7 +41,7 @@ var fight = function(enemy) {
             window.alert(enemy.name + ' has died!');
         
             // award player money for winning
-            playerInfo.health = playerInfo.health + 20;
+            playerInfo.money = playerInfo.money + 20;
 
             // leave while() loop since enemy is dead
             break;
@@ -45,6 +53,7 @@ var fight = function(enemy) {
         var damage = randomNumber(enemy.attack - 3, enemy.attack);
         
         playerInfo.health = Math.max(0, playerInfo.health - damage);
+        
         console.log(
                 enemy.name + ' attacked ' + playerInfo.name + '. ' + playerInfo.name + ' now has ' + playerInfo.health + ' health remaining.'
             );
@@ -73,14 +82,11 @@ var startGame = function () {
             // let player know they are starting a new round
             window.alert("Welcome to Robot Gladiators!  Round " + ( i +1 ));
 
-            // pick new enemy to fight based on the index of the enemyNames array
+            // pick new enemy to fight based on the index of the enemyInfo array
             var pickedEnemyObj = enemyInfo[i];
 
             // reset enemyHealth before starting new fight
             pickedEnemyObj.health = randomNumber(40, 60);
-
-            // use debugger to pause the script from running and check what's going on at that moment in the code
-            // debugger;
 
             // pass the pickedEnemyName variable's value into the fight function, where it will assume the value of the enemyName parameter
             fight(pickedEnemyObj);
@@ -89,10 +95,11 @@ var startGame = function () {
             if (playerInfo.health > 0 && i < enemyInfo.length - 1) {
                 // ask if player wants to use the store before the next round
                 var storeConfirm = window.confirm("The fight is over, visit the store or select 'cancel' to fight the next round? ");
-            }
+        
                 // if yes, take them to the store() function
                 if (storeConfirm) {
                  shop();
+                }
             }
         }
         // if player isn't alive, stop the game
@@ -103,13 +110,12 @@ var startGame = function () {
     } 
     // after the loop ends, player is either out of health of enemies to fight, so run endGame function
     endGame();
-        
-    // play again
-    startGame();
 };
 
 // function to end the entire game
 var endGame = function() {
+    window.alert("The game has now ended.  Let's see how you did!");
+
     // if player is still alive, player wins!
     if (playerInfo.health > 0) {
         window.alert("Great job, " + playerInfo.name + " survived the game!  You now have a score of " + playerInfo.money + ". ");    
@@ -117,16 +123,13 @@ var endGame = function() {
     else {
         window.alert("You've lost your robot in battle.");
     }
-    /// window.alert("The game has now ended.  Let's see how you did!");
-
-    // ask player if they'd like tpo play again
+    // ask player if they'd like to play again
     var playAgainConfirm = window.confirm("Would you like to play again?");
 
     if (playAgainConfirm) {
         // restart the game
         startGame();
-    }
-    else {
+    } else {
         window.alert("Thank you for playing Robot Gladiators!  Come back soon!");
     }   
 };
@@ -168,12 +171,9 @@ var shop = function() {
 
 };
 
-// function to generate a random numeric value
-var randomNumber = function(min, max) {
-    var value = Math.floor(Math.random() * (max - min + 1) + min);
+/* END GAME FUNCTIONS */
 
-    return value;
-};
+/* GAME INFORMATION / VARIABLES */
 
 // player info object with object method
 var playerInfo = {
@@ -205,7 +205,7 @@ var playerInfo = {
         else {
             window.alert("You don't have enough money!");
         }
-    },    
+    }    
 };
 
 // enemy info array
@@ -224,5 +224,12 @@ var enemyInfo = [
     }
 ];
 
-// start the game when the page loads
-startGame()
+console.log(enemyInfo);
+console.log(enemyInfo[0]);
+console.log(enemyInfo[0].name);
+console.log(enemyInfo[0]['attack']);
+
+/* END GAME INFORMATION / VARIABLES */
+
+/* RUN GAME */
+startGame();
