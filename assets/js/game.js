@@ -7,16 +7,22 @@ var randomNumber = function(min, max) {
     return value;
 };
 
-// fight function
-var fight = function(enemy) {
-    while (playerInfo.health >0 && enemy.health > 0) {
-        // ask player if they'd like to fight or run
-        var promptFight = window.prompt('Would you like to FIGHT to SKIP this battle? Enter "FIGHT" or "SKIP" to choose.');
-        
-        // if player chooses to skip
-        if (promptFight === "skip" || promptFight === "SKIP") {
-            // confirm player wants to skip
-            var confirmSkip = window.confirm("Are you sure you'd like to quit?");
+// fight or skip function //
+var fightOrSkip = function() {
+    // ask player if they'd like to fight or run
+    var promptFight = window.prompt('Would you like to FIGHT to SKIP this battle? Enter "FIGHT" or "SKIP" to choose.');
+    
+     // Conditional Recursive Functional Call
+    if (promptFight === "" || promptFight === null) {
+         window.alert("You need to provide a valid answer!  Please try again.");
+        return fightOrSkip();
+    }
+
+    // if player chooses to skip
+    promptFight = promptFight.toLowerCase()
+    if (promptFight === "skip") {
+    // confirm player wants to skip
+    var confirmSkip = window.confirm("Are you sure you'd like to quit?");
 
         // if yes (true), leave fight
         if (confirmSkip) {
@@ -24,17 +30,31 @@ var fight = function(enemy) {
             // subtract money from playerMoney for skipping
             playerInfo.money = Math.max(0, playerInfo.money - 10);
             console.log("playerMoney", playerInfo.money);
+            
+            //return true if player wants to leave
+            return true;
+
+            //return false to fight
+            return false;
+        }
+    }
+}; 
+
+// fight function
+var fight = function(enemy) {
+    while (playerInfo.health > 0 && enemy.health > 0) {
+        //ask player if they'd like to fight or skip using fightOrSkip function
+        if (fightOrSkip()) {
+            //if true, leave fight by breaking loop
             break;
         }
-    } 
 
        // genertate random damage value based on player's attack power
        var damage = randomNumber(playerInfo.attack - 3, playerInfo.attack);
 
        enemy.health = Math.max(0, enemy.health - damage);
         console.log(
-            playerInfo.name + ' attacked ' + enemy.name + '. ' + enemy.name + ' now has ' + enemy.health + ' health remaining.'
-        );
+            playerInfo.name + ' attacked ' + enemy.name + '. ' + enemy.name + ' now has ' + enemy.health + ' health remaining.');
 
         // check enemy's health
         if (enemy.health <= 0) {
@@ -66,8 +86,8 @@ var fight = function(enemy) {
             } else {
                 window.alert(playerInfo.name + ' still has ' + playerInfo.health + ' health left.');
             }
-        }    
-    };
+    }       
+};
 
 // function to start a new game
 var startGame = function () {
@@ -168,7 +188,6 @@ var shop = function() {
             shop();
             break;
     } 
-
 };
 
 /* END GAME FUNCTIONS */
