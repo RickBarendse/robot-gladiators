@@ -18,8 +18,9 @@ var fightOrSkip = function() {
         return fightOrSkip();
     }
 
-    // if player chooses to skip
-    promptFight = promptFight.toLowerCase()
+    // convert promptFight to all lowercase so we can check with less options
+    promptFight = promptFight.toLowerCase();
+
     if (promptFight === "skip") {
     // confirm player wants to skip
     var confirmSkip = window.confirm("Are you sure you'd like to quit?");
@@ -29,15 +30,14 @@ var fightOrSkip = function() {
             window.alert(playerInfo.name + " has decided to skip this fight.  Goodbye!");
             // subtract money from playerMoney for skipping
             playerInfo.money = Math.max(0, playerInfo.money - 10);
-            console.log("playerMoney", playerInfo.money);
+            // stop while() loop using break; and enter next fight
             
             //return true if player wants to leave
             return true;
-
-            //return false to fight
-            return false;
         }
     }
+    //return false to fight
+    return false;
 }; 
 
 // fight function
@@ -110,6 +110,9 @@ var startGame = function () {
 
     // fight each enenmy-robot by looping over them and fighting them one at a time
     for (var i = 0; i < enemyInfo.length; i++) {
+        // check player stats
+        console.log(playerInfo);
+
         // if player is still alive, keep fighting
         if (playerInfo.health >0) {
             // let player know they are starting a new round
@@ -121,10 +124,12 @@ var startGame = function () {
             // reset enemyHealth before starting new fight
             pickedEnemyObj.health = randomNumber(40, 60);
 
+            console.log(pickedEnemyObj);
+
             // pass the pickedEnemyName variable's value into the fight function, where it will assume the value of the enemyName parameter
             fight(pickedEnemyObj);
 
-            // if we're not at the last enemy in the array
+            // if player is still alive and we're not at the last enemy in the array 
             if (playerInfo.health > 0 && i < enemyInfo.length - 1) {
                 // ask if player wants to use the store before the next round
                 var storeConfirm = window.confirm("The fight is over, visit the store or select 'cancel' to fight the next round? ");
@@ -149,13 +154,22 @@ var startGame = function () {
 var endGame = function() {
     window.alert("The game has now ended.  Let's see how you did!");
 
-    // if player is still alive, player wins!
-    if (playerInfo.health > 0) {
-        window.alert("Great job, " + playerInfo.name + " survived the game!  You now have a score of " + playerInfo.money + ". ");    
+    // check localStorage for high score, if it's not there use 0
+    var highScore = localStorage.getItem("highscore");
+    if(highScore === null) {
+        highScore = 0;
     }
-    else {
-        window.alert("You've lost your robot in battle.");
+    
+    // if player has more money than the high score, player has new high score!
+    if (playerInfo.money > highScore) {
+        localStorage.setItem("highscore", playerInfo.money);
+        localStorage.setItem("name", playerInfo.name);
+
+        alert(playerInfo + " now has the high score of " + playerInfo.money + "!");
+    } else {
+        alert(playerInfo.name + " did not beat the high score of " + highScore + ". Maybe next time!");   
     }
+  
     // ask player if they'd like to play again
     var playAgainConfirm = window.confirm("Would you like to play again?");
 
@@ -174,36 +188,31 @@ var shop = function() {
         "Would you like to REFILL your health, UPGRADE your attack, or LEAVE the store?  Please enter '1' to REFILL, '2' to UPGRADE, or 3 to LEAVE."
     );
 
-    // use switch to carry out action
+    //convert answer from prompt to an actual number
     shopOptionPrompt = parseInt(shopOptionPrompt);
+
+    // use switch to carry out action
     switch (shopOptionPrompt) {
         case 1:
-                // increas health and decrease money
-                playerInfo.refillHealth();
-                break;
-
-            case 2:
-                // increase attack and decrease money
-                playerInfo.upgradeAttack();
+            // increast health and decrease money
+            playerInfo.refillHealth();
             break;
-
-            case 3:
+        case 2:
+            // increase attack and decrease money
+            playerInfo.upgradeAttack();
+            break;
+        case 3:
+            // nothing bought so function will end
             window.alert("Leaving the store.");
-            
-            // do nothing, so function will end
             break;
         default:
             window.alert("You did not pick a valid option.  Try again.");
-
             // call shop() again to force player to pick a valid option
             shop();
             break;
     } 
 };
 
-/* END GAME FUNCTIONS */
-
-/* GAME INFORMATION / VARIABLES */
 //function to set name
 var getPlayerName = function() {
     var name = "";
@@ -211,11 +220,13 @@ var getPlayerName = function() {
     while (name === "" || name === null) {
         name = prompt("What is your robot's name?");
     }
-
     console.log("Your robot's name is " + name);
     return name;
 };
 
+/* END GAME FUNCTIONS */
+
+/* GAME INFORMATION / VARIABLES */
 
 // player info object with object method
 var playerInfo = {
@@ -233,8 +244,7 @@ var playerInfo = {
             window.alert("Refilling player's health by 20 for 7 dollars.");
             this.health += 20;
             this.money -= 7;
-        }
-        else {
+        } else {
             window.alert("You don't have enough money!");
         }
     },
@@ -243,8 +253,7 @@ var playerInfo = {
             window.alert("Upgrading player's attack by 6 for 7 dollars.");
             this.attack += 6;
             this.money -= 7;
-        }
-        else {
+        } else {
             window.alert("You don't have enough money!");
         }
     }    
@@ -266,10 +275,10 @@ var enemyInfo = [
     }
 ];
 
-console.log(enemyInfo);
-console.log(enemyInfo[0]);
-console.log(enemyInfo[0].name);
-console.log(enemyInfo[0]['attack']);
+// console.log(enemyInfo);
+// console.log(enemyInfo[0]);
+// console.log(enemyInfo[0].name);
+// console.log(enemyInfo[0]['attack']);
 
 /* END GAME INFORMATION / VARIABLES */
 
